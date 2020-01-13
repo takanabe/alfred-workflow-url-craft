@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/pkg/errors"
@@ -57,13 +58,27 @@ func markdownLink(title, url string) string {
 	return fmt.Sprintf("[%s](%s)", title, url)
 }
 
+func validateURL(arg string) error {
+	// If there are any major problems with the format of the URL, url.Parse() will
+	// return an error.
+	u, err := url.Parse(arg)
+	if err != nil {
+		return errors.Wrapf(err, "%s is not a valid URL", arg)
+	} else if u.Scheme == "" || u.Host == "" {
+		return errors.Errorf("%s must be an absolute URL", arg)
+	} else if u.Scheme != "http" && u.Scheme != "https" {
+		return errors.Errorf("%s must begin with http or https", arg)
+	}
+	return nil
+}
+
 func main() {
 	var url *string = flag.String("url", "", "Generate GitHub flavored markdown link from a given URL")
 	flag.Parse()
 
-	title, err := pageTitle(*url)
+	err := validateURL(*url)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 
 	link := markdownLink(title, *url)
@@ -77,6 +92,7 @@ func main() {
 	items := Items{Items: []Item{item}}
 
 	jsonBytes, err := json.Marshal(items)
+	title, err := pageTitle(*url)
 	if err != nil {
 		log.Fatalf("JSON Marshal error: %s", err)
 	}

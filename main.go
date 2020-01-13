@@ -2,11 +2,8 @@ package main
 
 // Package is called aw
 import (
-	//"encoding/json"
-	"encoding/json"
 	"flag"
 	"fmt"
-	"log"
 	"net/http"
 	"net/url"
 
@@ -49,7 +46,7 @@ func pageTitle(url string) (string, error) {
 		return "", errors.Wrap(err, "Failed to load HTML document")
 	}
 
-	title := doc.Find("title").Text()
+	title := doc.Find("head > title").Text()
 
 	return title, nil
 }
@@ -81,21 +78,12 @@ func main() {
 		fmt.Println(err)
 	}
 
-	link := markdownLink(title, *url)
-
-	item := Item{
-		Title:    "Craft the specified URL as a markdown link",
-		SubTitle: "Hit the 'Enter' key to copy this result to clipboard",
-		Arg:      link,
-		Icon:     "icon.png",
-	}
-	items := Items{Items: []Item{item}}
-
-	jsonBytes, err := json.Marshal(items)
 	title, err := pageTitle(*url)
 	if err != nil {
-		log.Fatalf("JSON Marshal error: %s", err)
+		fmt.Println(err)
 	}
 
-	fmt.Println(string(jsonBytes))
+	link := markdownLink(title, *url)
+
+	fmt.Println(link)
 }

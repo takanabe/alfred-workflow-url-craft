@@ -37,7 +37,7 @@ type Item struct {
 func pageTitle(url string) (string, error) {
 	resp, err := http.Get(url)
 	if resp.StatusCode != 200 {
-		return "", errors.Wrap(err, "Invalid HTTP status code")
+		return "", errors.Errorf("Invalid HTTP status code: %d", resp.StatusCode)
 	} else if err != nil {
 		return "", errors.Wrap(err, "Invalid HTTP response")
 	}

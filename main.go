@@ -11,26 +11,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-// A Script Filter is required to return an items array of zero or more items.
-// Each item describes a result row displayed in Alfred.
-// https://www.alfredapp.com/help/workflows/inputs/script-filter/json/
-type Items struct {
-	Items []Item `json:"items"`
-}
-
-type Item struct {
-	// The title displayed in the result row. There are no options for this element
-	// and it is essential that this element is populated.
-	Title string `json:"title"`
-	// The subtitle displayed in the result row. This element is optional.
-	SubTitle string `json:"subtitle"`
-	// The argument which is passed through the workflow to the connected output action.
-	Arg string `json:"arg"`
-	// The icon displayed in the result row. Workflows are run from their workflow folder,
-	// so you can reference icons stored in your workflow relatively.
-	Icon string `json:"icon"`
-}
-
 func pageTitle(url string) (string, error) {
 	resp, err := http.Get(url)
 	if resp.StatusCode != 200 {
